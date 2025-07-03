@@ -5,12 +5,14 @@ from sqlalchemy import text
 from app.models import Base
 from app.routers import router
 from app.auth import router as auth_router
+from app.routers import category_router
 app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
 
 app.include_router(router)
 app.include_router(auth_router)
+app.include_router(category_router)
 
 @app.get("/")
 def read_root():
