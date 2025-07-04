@@ -5,16 +5,15 @@ from app.models import Category
 from app.schemas import CategoryResponse, CategoryCreate
 from app.crud import insertCategory
 from app.auth import get_current_user
-from app.helper import get_current_user_id
 
 router = APIRouter(prefix="/category", tags=["Category Section"])
 
 @router.post("/create", response_model= CategoryResponse)
-def create_category(data : CategoryCreate, db : Session = Depends(get_db)):
+def create_category(data : CategoryCreate, db : Session = Depends(get_db), user = Depends(get_current_user)):
     cat = db.query(Category).filter(Category.name == data.name, Category.is_active == 1).first()
     if cat:
         raise HTTPException(status_code=401, detail= "Category already exists !!")
-    inserted_data = insertCategory(db, data)
+    inserted_data = insertCategory(db, data, int(user.id))
 
     if not inserted_data:
         raise HTTPException(status_code=401, detail= "User can't be created !!")
